@@ -42,8 +42,10 @@ export default function DataTable({
   }
 
   const sorted = useMemo(() => {
-    if (!sortKey) return data
-    return [...data].sort((a, b) => {
+    // Defensive: always work with an array regardless of what parent passes
+    const safe = Array.isArray(data) ? data : []
+    if (!sortKey) return safe
+    return [...safe].sort((a, b) => {
       const av = a[sortKey] ?? ''
       const bv = b[sortKey] ?? ''
       const cmp = typeof av === 'number'

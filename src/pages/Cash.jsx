@@ -46,7 +46,8 @@ export default function Cash() {
       ])
       if (cashRes.status === 'fulfilled') {
         const d2 = cashRes.value.data
-        setMovements(Array.isArray(d2) ? d2 : d2.movements || d2.data || [])
+        const inner2 = Array.isArray(d2) ? d2 : (d2?.data ?? d2)
+        setMovements(Array.isArray(inner2) ? inner2 : inner2?.movements || inner2?.items || [])
       } else {
         setMovements([])
         if (cashRes.reason?.response?.status !== 404) {

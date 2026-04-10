@@ -147,7 +147,8 @@ export default function Clients() {
     setError(null)
     try {
       const { data } = await adminAPI.getClients(adminId, { ...params, limit: LIMIT, offset: off })
-      const rows = Array.isArray(data) ? data : data.clients || data.data || []
+      const inner = Array.isArray(data) ? data : (data?.data ?? data)
+      const rows = Array.isArray(inner) ? inner : inner?.clients || inner?.data || []
       if (replace) setClients(rows)
       else setClients(prev => [...prev, ...rows])
       setHasMore(rows.length === LIMIT)
