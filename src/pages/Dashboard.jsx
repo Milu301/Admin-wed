@@ -32,7 +32,7 @@ export default function Dashboard() {
     setError(null)
     try {
       const { data } = await adminAPI.getStats(id)
-      setStats(data)
+      setStats(data?.data ?? data)
       setLastUpdate(new Date())
     } catch (err) {
       if (err.response?.status === 404) {
