@@ -55,7 +55,8 @@ export default function Cash() {
         }
       }
       if (summaryRes.status === 'fulfilled') {
-        setSummary(summaryRes.value.data)
+        const sd = summaryRes.value.data
+        setSummary(sd?.data ?? sd)
       } else {
         setSummary(null)
       }

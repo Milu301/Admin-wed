@@ -19,8 +19,11 @@ export default function Vendors() {
   const [showCreate, setShowCreate] = useState(false)
   const [showDelete, setShowDelete] = useState(null)
   const [showReset, setShowReset] = useState(null)
+  const [showEdit, setShowEdit] = useState(null)
+  const [editForm, setEditForm] = useState({})
   const [form, setForm] = useState(EMPTY_FORM)
   const [formError, setFormError] = useState('')
+  const [editError, setEditError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [actionMsg, setActionMsg] = useState(null)
 
@@ -91,6 +94,49 @@ export default function Vendors() {
     }
   }
 
+  const openEdit = (vendor) => {
+    setShowEdit(vendor)
+    setEditForm({
+      name: vendor.name || vendor.fullName || '',
+      email: vendor.email || '',
+      phone: vendor.phone || vendor.phoneNumber || '',
+      password: '',
+      status: (vendor.active ?? vendor.status === 'active') ? 'active' : 'inactive',
+    })
+    setEditError('')
+  }
+
+  const handleEdit = async (e) => {
+    e.preventDefault()
+    setEditError('')
+    if (!editForm.name.trim() || !editForm.email.trim()) {
+      setEditError('Nombre y correo son requeridos.')
+      return
+    }
+    if (editForm.password && editForm.password.length < 6) {
+      setEditError('La contraseña debe tener al menos 6 caracteres.')
+      return
+    }
+    setSubmitting(true)
+    try {
+      const payload = {
+        name: editForm.name.trim(),
+        email: editForm.email.trim(),
+        phone: editForm.phone?.trim() || null,
+        status: editForm.status,
+      }
+      if (editForm.password) payload.password = editForm.password
+      await vendorAPI.update(showEdit.id || showEdit.vendorId, payload)
+      setShowEdit(null)
+      showMsg('Vendedor actualizado correctamente.')
+      fetchVendors()
+    } catch (err) {
+      setEditError(err.response?.data?.message || 'Error al actualizar vendedor')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const handleDelete = async () => {
     if (!showDelete) return
     setSubmitting(true)
@@ -145,6 +191,15 @@ export default function Vendors() {
       sortable: false,
       render: (_, row) => (
         <div className="flex items-center gap-1.5">
+          <button
+            onClick={(e) => { e.stopPropagation(); openEdit(row) }}
+            title="Editar"
+            className="p-1.5 rounded-lg text-textMuted hover:text-primary hover:bg-primary/10 transition-colors"
+          >
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
+          </button>
           <button
             onClick={(e) => { e.stopPropagation(); handleToggleStatus(row) }}
             title={(row.active ?? row.status === 'active') ? 'Desactivar' : 'Activar'}
@@ -324,6 +379,89 @@ export default function Vendors() {
             </p>
           </div>
         </div>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={!!showEdit}
+        onClose={() => setShowEdit(null)}
+        title={`Editar: ${showEdit?.name || ''}`}
+        footer={
+          <>
+            <button onClick={() => setShowEdit(null)} className="btn-secondary text-sm">Cancelar</button>
+            <button onClick={handleEdit} disabled={submitting} className="btn-primary text-sm">
+              {submitting ? 'Guardando...' : 'Guardar cambios'}
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleEdit} className="space-y-4">
+          {editError && (
+            <div className="px-3 py-2 bg-error/10 border border-error/30 rounded-lg text-error text-sm">{editError}</div>
+          )}
+          <div>
+            <label className="label">Nombre completo *</label>
+            <input
+              className="input-field"
+              value={editForm.name || ''}
+              onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+              placeholder="Juan Pérez"
+              required
+            />
+          </div>
+          <div>
+            <label className="label">Correo electrónico *</label>
+            <input
+              type="email"
+              className="input-field"
+              value={editForm.email || ''}
+              onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))}
+              placeholder="vendedor@ejemplo.com"
+              required
+            />
+          </div>
+          <div>
+            <label className="label">Nueva contraseña <span className="text-textMuted font-normal">(dejar en blanco para no cambiar)</span></label>
+            <input
+              type="password"
+              className="input-field"
+              value={editForm.password || ''}
+              onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))}
+              placeholder="Mínimo 6 caracteres"
+              autoComplete="new-password"
+            />
+          </div>
+          <div>
+            <label className="label">Teléfono</label>
+            <input
+              type="tel"
+              className="input-field"
+              value={editForm.phone || ''}
+              onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
+              placeholder="5512345678"
+            />
+          </div>
+          <div>
+            <label className="label">Estado</label>
+            <div className="flex gap-3">
+              {[{ v: 'active', label: 'Activo' }, { v: 'inactive', label: 'Inactivo' }].map(({ v, label }) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setEditForm(f => ({ ...f, status: v }))}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all ${editForm.status === v
+                    ? v === 'active'
+                      ? 'bg-success/15 border-success/40 text-success'
+                      : 'bg-error/15 border-error/40 text-error'
+                    : 'bg-surfaceBright border-border text-textSecondary hover:border-textMuted'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </form>
       </Modal>
 
       {/* Delete Modal */}
