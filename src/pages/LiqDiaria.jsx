@@ -581,16 +581,25 @@ export default function LiqDiaria() {
     setLoading(true)
     setError(null)
     try {
-      const [rdRes, vsRes] = await Promise.all([
+      const [rdRes, vsRes] = await Promise.allSettled([
         adminAPI.getVendorRouteDay(adminId, selectedVendorId, date),
         adminAPI.getVendorStats(adminId, selectedVendorId),
       ])
-      setRouteDay(rdRes.data)
-      setVendorStats(vsRes.data)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Error al cargar datos del vendedor')
-      setRouteDay(null)
-      setVendorStats(null)
+      if (rdRes.status === 'fulfilled') {
+        const rd = rdRes.value.data
+        setRouteDay(rd?.data ?? rd)
+      } else {
+        setRouteDay(null)
+        if (rdRes.reason?.response?.status !== 404) {
+          setError(rdRes.reason?.response?.data?.message || 'Error al cargar liquidación diaria')
+        }
+      }
+      if (vsRes.status === 'fulfilled') {
+        const vs = vsRes.value.data
+        setVendorStats(vs?.data ?? vs)
+      } else {
+        setVendorStats(null)
+      }
     } finally {
       setLoading(false)
     }

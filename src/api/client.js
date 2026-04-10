@@ -83,4 +83,5 @@ export const vendorAPI = {
 // ─── Clients ───────────────────────────────────────────────────────────────
 export const clientAPI = {
   getCredits: (clientId) => apiClient.get(`/clients/${clientId}/credits`),
+  update: (clientId, data) => apiClient.put(`/clients/${clientId}`, data),
 }

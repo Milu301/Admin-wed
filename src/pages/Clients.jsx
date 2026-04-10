@@ -44,12 +44,15 @@ function LV({ label, value }) {
 
 // ─── expanded panel (inline below row) ───────────────────────────────────── //
 
-function ExpandedPanel({ row, creditsState }) {
+function ExpandedPanel({ row, creditsState, onEdit }) {
   return (
     <div className="bg-surfaceBright/60 px-4 py-3 space-y-3">
       {/* Options button */}
       <div>
-        <button className="inline-flex items-center gap-1.5 text-xs text-textSecondary border border-border rounded px-2 py-1 hover:bg-surfaceBright transition-colors">
+        <button
+          onClick={() => onEdit(row)}
+          className="inline-flex items-center gap-1.5 text-xs text-textSecondary border border-border rounded px-2 py-1 hover:bg-surfaceBright hover:border-primary hover:text-primary transition-colors"
+        >
           <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
             <circle cx="8" cy="3" r="1.5" /><circle cx="8" cy="8" r="1.5" /><circle cx="8" cy="13" r="1.5" />
           </svg>
@@ -138,6 +141,11 @@ export default function Clients() {
   const [sentFilters, setSentFilters] = useState({})
   const [expandedRows, setExpandedRows] = useState(new Set())
   const [creditsCache, setCreditsCache] = useState({})
+  const [editingClient, setEditingClient] = useState(null)
+  const [editForm, setEditForm] = useState({})
+  const [editSubmitting, setEditSubmitting] = useState(false)
+  const [editError, setEditError] = useState('')
+  const [editSuccess, setEditSuccess] = useState('')
 
   const LIMIT = 50
 
@@ -204,6 +212,45 @@ export default function Clients() {
     })
     if (!wasExpanded && !creditsCache[clientId]) {
       loadCredits(clientId)
+    }
+  }
+
+  const openEdit = (row) => {
+    setEditingClient(row)
+    setEditForm({
+      name: row.name || row.fullName || row.full_name || '',
+      phone: row.phone || row.phoneNumber || '',
+      doc_id: row.doc_id || row.docId || row.document_id || '',
+      address: row.address || '',
+      notes: row.observations || row.notes || '',
+      status: row.status === 'inactive' ? 'inactive' : 'active',
+    })
+    setEditError('')
+    setEditSuccess('')
+  }
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault()
+    setEditError('')
+    if (!editForm.name?.trim()) { setEditError('El nombre es requerido.'); return }
+    setEditSubmitting(true)
+    try {
+      const clientId = editingClient.id || editingClient.clientId
+      await clientAPI.update(clientId, {
+        name: editForm.name.trim(),
+        phone: editForm.phone?.trim() || null,
+        doc_id: editForm.doc_id?.trim() || null,
+        address: editForm.address?.trim() || null,
+        notes: editForm.notes?.trim() || null,
+        status: editForm.status,
+      })
+      setEditSuccess('Cliente actualizado correctamente.')
+      fetchClients(sentFilters, 0, true)
+      setTimeout(() => { setEditingClient(null); setEditSuccess('') }, 1500)
+    } catch (err) {
+      setEditError(err.response?.data?.message || 'Error al actualizar cliente')
+    } finally {
+      setEditSubmitting(false)
     }
   }
 
@@ -445,7 +492,7 @@ export default function Clients() {
                       {expanded && (
                         <tr key={`${clientId}-exp`} className="border-b border-border">
                           <td colSpan={11} className="p-0">
-                            <ExpandedPanel row={row} creditsState={creditsCache[clientId]} />
+                            <ExpandedPanel row={row} creditsState={creditsCache[clientId]} onEdit={openEdit} />
                           </td>
                         </tr>
                       )}
@@ -479,6 +526,118 @@ export default function Clients() {
           <button onClick={handleLoadMore} className="btn-secondary text-sm">
             Cargar más clientes
           </button>
+        </div>
+      )}
+
+      {/* ── Edit Client Modal ── */}
+      {editingClient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-surfaceCard border border-border rounded-2xl shadow-2xl w-full max-w-md">
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <h3 className="font-semibold text-textPrimary text-base">Editar Cliente</h3>
+              <button
+                onClick={() => setEditingClient(null)}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-textMuted hover:bg-surfaceBright hover:text-textPrimary transition-colors"
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal body */}
+            <form onSubmit={handleEditSubmit} className="px-5 py-4 space-y-4">
+              {editError && (
+                <div className="px-3 py-2 bg-error/10 border border-error/30 rounded-lg text-error text-sm">{editError}</div>
+              )}
+              {editSuccess && (
+                <div className="px-3 py-2 bg-success/10 border border-success/30 rounded-lg text-success text-sm">{editSuccess}</div>
+              )}
+
+              <div>
+                <label className="label">Nombre completo *</label>
+                <input
+                  className="input-field"
+                  value={editForm.name}
+                  onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                  placeholder="Nombre del cliente"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label">Teléfono</label>
+                  <input
+                    className="input-field"
+                    value={editForm.phone}
+                    onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
+                    placeholder="Número de teléfono"
+                  />
+                </div>
+                <div>
+                  <label className="label">Documento</label>
+                  <input
+                    className="input-field"
+                    value={editForm.doc_id}
+                    onChange={e => setEditForm(f => ({ ...f, doc_id: e.target.value }))}
+                    placeholder="Cédula / ID"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="label">Dirección</label>
+                <input
+                  className="input-field"
+                  value={editForm.address}
+                  onChange={e => setEditForm(f => ({ ...f, address: e.target.value }))}
+                  placeholder="Dirección del cliente"
+                />
+              </div>
+
+              <div>
+                <label className="label">Observaciones</label>
+                <textarea
+                  className="input-field resize-none"
+                  rows={3}
+                  value={editForm.notes}
+                  onChange={e => setEditForm(f => ({ ...f, notes: e.target.value }))}
+                  placeholder="Notas sobre el cliente..."
+                />
+              </div>
+
+              <div>
+                <label className="label">Estado</label>
+                <div className="flex gap-3">
+                  {[{ v: 'active', label: 'Activo' }, { v: 'inactive', label: 'Inactivo' }].map(({ v, label }) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setEditForm(f => ({ ...f, status: v }))}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all ${editForm.status === v
+                        ? v === 'active'
+                          ? 'bg-success/15 border-success/40 text-success'
+                          : 'bg-error/15 border-error/40 text-error'
+                        : 'bg-surfaceBright border-border text-textSecondary hover:border-textMuted'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </form>
+
+            {/* Modal footer */}
+            <div className="flex justify-end gap-2 px-5 py-4 border-t border-border">
+              <button onClick={() => setEditingClient(null)} className="btn-secondary text-sm">Cancelar</button>
+              <button onClick={handleEditSubmit} disabled={editSubmitting} className="btn-primary text-sm">
+                {editSubmitting ? 'Guardando...' : 'Guardar cambios'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
