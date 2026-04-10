@@ -56,7 +56,8 @@ function CollectionsTab({ adminId }) {
         start_date: params.startDate,
         end_date: params.endDate,
       })
-      setData(Array.isArray(d) ? d : d.data || d.collections || [])
+      const inner = d?.data ?? d
+      setData(Array.isArray(inner) ? inner : inner?.collections || [])
       setLoaded(true)
     } catch (err) {
       setError(err.response?.data?.message || 'Error al cargar reporte')
@@ -144,7 +145,8 @@ function LateClientsTab({ adminId }) {
     setError(null)
     try {
       const { data: d } = await adminAPI.getLateClientsReport(adminId)
-      setData(Array.isArray(d) ? d : d.data || d.clients || [])
+      const inner = d?.data ?? d
+      setData(Array.isArray(inner) ? inner : inner?.clients || [])
       setLoaded(true)
     } catch (err) {
       setError(err.response?.data?.message || 'Error al cargar reporte')
@@ -216,7 +218,8 @@ function VendorPerformanceTab({ adminId }) {
     setError(null)
     try {
       const { data: d } = await adminAPI.getVendorPerformanceReport(adminId)
-      setData(Array.isArray(d) ? d : d.data || d.vendors || [])
+      const inner = d?.data ?? d
+      setData(Array.isArray(inner) ? inner : inner?.vendors || [])
       setLoaded(true)
     } catch (err) {
       setError(err.response?.data?.message || 'Error al cargar reporte')
