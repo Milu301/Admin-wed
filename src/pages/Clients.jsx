@@ -146,8 +146,19 @@ export default function Clients() {
   const [editSubmitting, setEditSubmitting] = useState(false)
   const [editError, setEditError] = useState('')
   const [editSuccess, setEditSuccess] = useState('')
+  const [vendors, setVendors] = useState([])
 
   const LIMIT = 50
+
+  useEffect(() => {
+    if (!adminId) return
+    adminAPI.getVendors(adminId)
+      .then(({ data }) => {
+        const list = Array.isArray(data) ? data : data?.vendors || data?.data || []
+        setVendors(list)
+      })
+      .catch(() => {})
+  }, [adminId])
 
   const fetchClients = useCallback(async (params = {}, off = 0, replace = true) => {
     if (!adminId) return
@@ -224,6 +235,7 @@ export default function Clients() {
       address: row.address || '',
       notes: row.observations || row.notes || '',
       status: row.status === 'inactive' ? 'inactive' : 'active',
+      vendor_id: row.vendor_id || row.vendorId || '',
     })
     setEditError('')
     setEditSuccess('')
@@ -243,6 +255,7 @@ export default function Clients() {
         address: editForm.address?.trim() || null,
         notes: editForm.notes?.trim() || null,
         status: editForm.status,
+        vendor_id: editForm.vendor_id || null,
       })
       setEditSuccess('Cliente actualizado correctamente.')
       fetchClients(sentFilters, 0, true)
@@ -606,6 +619,22 @@ export default function Clients() {
                   onChange={e => setEditForm(f => ({ ...f, notes: e.target.value }))}
                   placeholder="Notas sobre el cliente..."
                 />
+              </div>
+
+              <div>
+                <label className="label">Vendedor asignado</label>
+                <select
+                  className="input-field"
+                  value={editForm.vendor_id}
+                  onChange={e => setEditForm(f => ({ ...f, vendor_id: e.target.value }))}
+                >
+                  <option value="">— Sin vendedor —</option>
+                  {vendors.map(v => (
+                    <option key={v.id || v.vendorId} value={v.id || v.vendorId}>
+                      {v.name || v.fullName || '—'}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
