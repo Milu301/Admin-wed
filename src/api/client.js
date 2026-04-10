@@ -80,6 +80,17 @@ export const vendorAPI = {
     apiClient.put(`/vendors/${vendorId}`, { status: active ? 'active' : 'inactive' }),
 }
 
+// ─── Routes ────────────────────────────────────────────────────────────────
+export const routeAPI = {
+  list: (adminId, params = {}) => apiClient.get(`/admins/${adminId}/routes`, { params }),
+  create: (adminId, data) => apiClient.post(`/admins/${adminId}/routes`, data),
+  update: (routeId, data) => apiClient.put(`/routes/${routeId}`, data),
+  delete: (routeId) => apiClient.delete(`/routes/${routeId}`),
+  getClients: (routeId) => apiClient.get(`/routes/${routeId}/clients`),
+  setClients: (routeId, clients) => apiClient.post(`/routes/${routeId}/clients`, { clients }),
+  assign: (routeId, data) => apiClient.post(`/routes/${routeId}/assign`, data),
+}
+
 // ─── Clients ───────────────────────────────────────────────────────────────
 export const clientAPI = {
   getCredits: (clientId) => apiClient.get(`/clients/${clientId}/credits`),

@@ -9,6 +9,7 @@ const PAGE_TITLES = {
   '/cash': { title: 'Caja', subtitle: 'Movimientos y balance diario' },
   '/reports': { title: 'Reportes', subtitle: 'Análisis y estadísticas' },
   '/settings': { title: 'Configuración', subtitle: 'Cuenta y preferencias' },
+  '/routes': { title: 'Rutas', subtitle: 'Gestión de rutas y asignaciones' },
 }
 
 export default function Layout() {
