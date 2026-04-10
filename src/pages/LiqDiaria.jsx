@@ -659,9 +659,17 @@ export default function LiqDiaria() {
         <div className="px-4 py-3 bg-error/10 border border-error/30 rounded-xl text-error text-sm">{error}</div>
       )}
 
-      {loading && !routeDay ? (
+      {loading ? (
         <div className="flex items-center justify-center py-20 text-textMuted gap-2">
           <Spinner /> Cargando datos...
+        </div>
+      ) : !routeDay && !vendorStats && !error ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-3 text-textMuted">
+          <svg className="w-12 h-12 opacity-25" viewBox="0 0 24 24" fill="none">
+            <path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M9 12h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+          <p className="text-sm font-medium">Sin datos de ruta para esta fecha</p>
+          <p className="text-xs text-textMuted">El vendedor aún no tiene una ruta asignada o no ha iniciado el día.</p>
         </div>
       ) : (
         <div className="flex gap-5 items-start">
