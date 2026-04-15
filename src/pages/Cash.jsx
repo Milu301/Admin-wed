@@ -10,7 +10,7 @@ import { currency, formatDate } from '../utils/formatters'
 
 const today = () => new Date().toISOString().split('T')[0]
 
-const EMPTY_MOVEMENT = { type: 'income', amount: '', description: '', category: '' }
+const EMPTY_MOVEMENT = { movement_type: 'income', amount: '', note: '', category: '' }
 
 export default function Cash() {
   const { admin } = useAuth()
@@ -72,16 +72,17 @@ export default function Cash() {
       setFormError('Ingresa un monto válido mayor a 0.')
       return
     }
-    if (!form.description.trim()) {
+    if (!form.note.trim()) {
       setFormError('La descripción es requerida.')
       return
     }
     setSubmitting(true)
     try {
       await adminAPI.createCashMovement(adminId, {
-        ...form,
+        movement_type: form.movement_type,
         amount: Number(form.amount),
-        date,
+        note: form.note,
+        category: form.category || undefined,
       })
       setShowAdd(false)
       setForm(EMPTY_MOVEMENT)
@@ -96,19 +97,19 @@ export default function Cash() {
 
   const cols = [
     {
-      key: 'type',
+      key: 'movement_type',
       label: 'Tipo',
       render: (v, row) => {
-        const isIncome = v === 'income' || v === 'ingreso' || row.is_income
+        const isIncome = v === 'income' || row.is_income
         return <Badge variant={isIncome ? 'income' : 'expense'} label={isIncome ? 'Ingreso' : 'Egreso'} />
       },
     },
     {
-      key: 'description',
+      key: 'note',
       label: 'Descripción',
       render: (v, row) => (
         <div>
-          <p className="text-sm text-textPrimary">{v || row.concept || '—'}</p>
+          <p className="text-sm text-textPrimary">{v || row.description || row.concept || '—'}</p>
           {row.category && <p className="text-xs text-textMuted">{row.category}</p>}
         </div>
       ),
@@ -117,7 +118,7 @@ export default function Cash() {
       key: 'amount',
       label: 'Monto',
       render: (v, row) => {
-        const isIncome = row.type === 'income' || row.type === 'ingreso' || row.is_income
+        const isIncome = row.movement_type === 'income' || row.is_income
         return (
           <span className={`font-semibold text-sm ${isIncome ? 'text-success' : 'text-error'}`}>
             {isIncome ? '+' : '-'}{currency(Math.abs(v ?? 0))}
@@ -263,8 +264,8 @@ export default function Cash() {
                 <button
                   key={t}
                   type="button"
-                  onClick={() => setForm(f => ({ ...f, type: t }))}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-all ${form.type === t
+                  onClick={() => setForm(f => ({ ...f, movement_type: t }))}
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium border transition-all ${form.movement_type === t
                     ? t === 'income'
                       ? 'bg-success/15 border-success/40 text-success'
                       : 'bg-error/15 border-error/40 text-error'
@@ -297,8 +298,8 @@ export default function Cash() {
             <input
               className="input-field"
               placeholder="Concepto del movimiento"
-              value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              value={form.note}
+              onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
               required
             />
           </div>

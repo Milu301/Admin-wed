@@ -9,6 +9,10 @@ import Clients from './pages/Clients'
 import Cash from './pages/Cash'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+<<<<<<< HEAD
+=======
+import LiqDiaria from './pages/LiqDiaria'
+>>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth()
@@ -44,6 +48,10 @@ function AppRoutes() {
         <Route path="/cash" element={<Cash />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
+<<<<<<< HEAD
+=======
+        <Route path="/liq-diaria" element={<LiqDiaria />} />
+>>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>

@@ -10,7 +10,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+<<<<<<< HEAD
     chunkSizeWarningLimit: 400,
+=======
+>>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
     rollupOptions: {
       output: {
         manualChunks: {

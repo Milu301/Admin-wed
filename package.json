@@ -6,8 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+<<<<<<< HEAD
     "preview": "vite preview",
     "start": "serve dist -l $PORT --single"
+=======
+    "preview": "vite preview"
+>>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
   },
   "dependencies": {
     "axios": "^1.6.7",
@@ -21,7 +25,10 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
+<<<<<<< HEAD
     "serve": "^14.2.1",
+=======
+>>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
     "tailwindcss": "^3.4.1",
     "vite": "^5.1.0"
   }
