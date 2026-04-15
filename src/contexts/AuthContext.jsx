@@ -24,12 +24,12 @@ export function AuthProvider({ children }) {
     try {
       const { data } = await authAPI.login(email, password)
 
-      // Interceptor unwraps { ok, data } → data = { token, admin, ... }
+      // Interceptor unwraps { ok, data } → data = { token, admin, session, ... }
       const receivedToken = data.token || data.access_token || data.accessToken
-      const receivedAdmin =
-        data.admin ||
-        data.user ||
-        { adminId: data.adminId, email: data.email, ...data }
+      const baseAdmin = data.admin || data.user || {}
+      // adminId may be in admin object or in the session field depending on backend version
+      const resolvedId = baseAdmin.adminId ?? baseAdmin.id ?? data.session?.adminId ?? data.adminId
+      const receivedAdmin = { ...baseAdmin, adminId: resolvedId, id: resolvedId }
 
       if (!receivedToken) throw new Error('No token received from server')
 
