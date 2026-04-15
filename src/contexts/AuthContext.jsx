@@ -24,11 +24,7 @@ export function AuthProvider({ children }) {
     try {
       const { data } = await authAPI.login(email, password)
 
-<<<<<<< HEAD
-      // Interceptor already unwraps { ok, data } → data = { token, admin, session }
-=======
-      // Support various response shapes
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
+      // Interceptor unwraps { ok, data } → data = { token, admin, ... }
       const receivedToken = data.token || data.access_token || data.accessToken
       const receivedAdmin =
         data.admin ||

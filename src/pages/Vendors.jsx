@@ -4,10 +4,7 @@ import { adminAPI, vendorAPI } from '../api/client'
 import DataTable from '../components/DataTable'
 import Modal from '../components/Modal'
 import Badge from '../components/Badge'
-<<<<<<< HEAD
 import { useToast } from '../components/Toast'
-=======
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
 
 const EMPTY_FORM = { name: '', email: '', password: '', phone: '' }
 
@@ -26,11 +23,7 @@ export default function Vendors() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-<<<<<<< HEAD
   const [toast, showToast] = useToast()
-=======
-  const [actionMsg, setActionMsg] = useState(null)
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
 
   const fetchVendors = useCallback(async () => {
     if (!adminId) return
@@ -48,14 +41,6 @@ export default function Vendors() {
 
   useEffect(() => { fetchVendors() }, [fetchVendors])
 
-<<<<<<< HEAD
-=======
-  const showMsg = (msg, type = 'success') => {
-    setActionMsg({ msg, type })
-    setTimeout(() => setActionMsg(null), 3500)
-  }
-
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
   const handleCreate = async (e) => {
     e.preventDefault()
     setFormError('')
@@ -68,11 +53,7 @@ export default function Vendors() {
       await adminAPI.createVendor(adminId, form)
       setShowCreate(false)
       setForm(EMPTY_FORM)
-<<<<<<< HEAD
       showToast('Vendedor creado correctamente.')
-=======
-      showMsg('Vendedor creado correctamente.')
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
       fetchVendors()
     } catch (err) {
       setFormError(err.response?.data?.message || 'Error al crear vendedor')
@@ -82,22 +63,13 @@ export default function Vendors() {
   }
 
   const handleToggleStatus = async (vendor) => {
-<<<<<<< HEAD
-    try {
-      await vendorAPI.toggleStatus(vendor.id || vendor.vendorId, !(vendor.active ?? vendor.status === 'active'))
-      showToast(`Vendedor ${vendor.active ? 'desactivado' : 'activado'}.`)
-      fetchVendors()
-    } catch (err) {
-      showToast(err.response?.data?.message || 'Error al cambiar estado', 'error')
-=======
     const isActive = vendor.active ?? vendor.status === 'active'
     try {
       await vendorAPI.toggleStatus(vendor.id || vendor.vendorId, !isActive)
-      showMsg(`Vendedor ${isActive ? 'desactivado' : 'activado'}.`)
+      showToast(`Vendedor ${isActive ? 'desactivado' : 'activado'}.`)
       fetchVendors()
     } catch (err) {
-      showMsg(err.response?.data?.message || 'Error al cambiar estado', 'error')
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
+      showToast(err.response?.data?.message || 'Error al cambiar estado', 'error')
     }
   }
 
@@ -107,15 +79,9 @@ export default function Vendors() {
     try {
       await vendorAPI.resetDevice(showReset.id || showReset.vendorId)
       setShowReset(null)
-<<<<<<< HEAD
       showToast('Dispositivo reiniciado. El vendedor deberá iniciar sesión de nuevo.')
     } catch (err) {
       showToast(err.response?.data?.message || 'Error al reiniciar dispositivo', 'error')
-=======
-      showMsg('Dispositivo reiniciado. El vendedor deberá iniciar sesión de nuevo.')
-    } catch (err) {
-      showMsg(err.response?.data?.message || 'Error al reiniciar dispositivo', 'error')
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
     } finally {
       setSubmitting(false)
     }
@@ -127,17 +93,10 @@ export default function Vendors() {
     try {
       await vendorAPI.delete(showDelete.id || showDelete.vendorId)
       setShowDelete(null)
-<<<<<<< HEAD
       showToast('Vendedor eliminado.')
       fetchVendors()
     } catch (err) {
       showToast(err.response?.data?.message || 'Error al eliminar vendedor', 'error')
-=======
-      showMsg('Vendedor eliminado.')
-      fetchVendors()
-    } catch (err) {
-      showMsg(err.response?.data?.message || 'Error al eliminar vendedor', 'error')
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
     } finally {
       setSubmitting(false)
     }
@@ -155,14 +114,11 @@ export default function Vendors() {
       ),
     },
     {
-<<<<<<< HEAD
-=======
       key: 'email',
       label: 'Correo',
       render: (v) => <span className="text-sm text-textSecondary">{v || '—'}</span>,
     },
     {
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
       key: 'active',
       label: 'Estado',
       render: (v, row) => {
@@ -244,16 +200,7 @@ export default function Vendors() {
         </div>
       </div>
 
-<<<<<<< HEAD
       {toast}
-=======
-      {/* Toast */}
-      {actionMsg && (
-        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm border animate-slide-in ${actionMsg.type === 'error' ? 'bg-error/10 border-error/30 text-error' : 'bg-success/10 border-success/30 text-success'}`}>
-          {actionMsg.type === 'error' ? '✗' : '✓'} {actionMsg.msg}
-        </div>
-      )}
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
 
       {/* Error */}
       {error && (

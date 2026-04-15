@@ -22,7 +22,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-<<<<<<< HEAD
 // Response interceptor — unwrap { ok, data } envelope + handle 401 → logout
 apiClient.interceptors.response.use(
   (response) => {
@@ -32,19 +31,10 @@ apiClient.interceptors.response.use(
     }
     return response
   },
-=======
-// Response interceptor — handle 401 → logout
-apiClient.interceptors.response.use(
-  (response) => response,
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('cobros_token')
       localStorage.removeItem('cobros_admin')
-<<<<<<< HEAD
-=======
-      // Redirect to login without causing a loop
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
       if (window.location.pathname !== '/') {
         window.location.href = '/'
       }
@@ -80,13 +70,10 @@ export const adminAPI = {
     apiClient.get(`/admins/${adminId}/reports/late-clients`, { params }),
   getVendorPerformanceReport: (adminId, params = {}) =>
     apiClient.get(`/admins/${adminId}/reports/vendor-performance`, { params }),
-<<<<<<< HEAD
-=======
   getVendorRouteDay: (adminId, vendorId, date) =>
     apiClient.get(`/admins/${adminId}/vendors/${vendorId}/route-day`, { params: { date } }),
   getVendorStats: (adminId, vendorId) =>
     apiClient.get(`/vendors/${vendorId}/stats`),
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
 }
 
 // ─── Vendors ───────────────────────────────────────────────────────────────
@@ -95,11 +82,7 @@ export const vendorAPI = {
   delete: (vendorId) => apiClient.delete(`/vendors/${vendorId}`),
   resetDevice: (vendorId) => apiClient.post(`/vendors/${vendorId}/reset-device`),
   toggleStatus: (vendorId, active) =>
-<<<<<<< HEAD
-    apiClient.put(`/vendors/${vendorId}`, { active }),
-=======
     apiClient.put(`/vendors/${vendorId}`, { status: active ? 'active' : 'inactive' }),
->>>>>>> d2eb52cd6cd5c27022eea8c815b2344d48780099
 }
 
 // ─── Clients ───────────────────────────────────────────────────────────────
