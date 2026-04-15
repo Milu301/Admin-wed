@@ -74,14 +74,17 @@ export default function Sidebar({ collapsed, onClose }) {
     <aside className={`flex flex-col h-full bg-surface border-r border-border transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-border flex-shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_rgba(108,99,255,0.35)]"
+          style={{ background: 'linear-gradient(135deg, #6C63FF, #4A43CC)' }}
+        >
           <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="#6C63FF" />
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="white" />
           </svg>
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <p className="font-bold text-textPrimary text-sm leading-tight">CobrosApp</p>
+            <p className="font-bold text-textPrimary text-sm leading-tight tracking-tight">CobrosApp</p>
             <p className="text-xs text-textMuted">Panel Admin</p>
           </div>
         )}

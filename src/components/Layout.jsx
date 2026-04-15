@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
+import { useAuth } from '../contexts/AuthContext'
 
 const PAGE_TITLES = {
   '/dashboard': { title: 'Dashboard', subtitle: 'Resumen general' },
@@ -15,7 +16,9 @@ export default function Layout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const { admin } = useAuth()
   const pageInfo = PAGE_TITLES[location.pathname] || { title: 'CobrosApp', subtitle: '' }
+  const adminInitial = admin?.email?.[0]?.toUpperCase() || 'A'
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg">
@@ -76,6 +79,14 @@ export default function Layout() {
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20">
               <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
               <span className="text-xs font-medium text-success">En línea</span>
+            </div>
+            {/* Admin avatar */}
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold text-white shadow-[0_0_12px_rgba(108,99,255,0.3)]"
+              style={{ background: 'linear-gradient(135deg, #6C63FF, #4A43CC)' }}
+              title={admin?.email}
+            >
+              {adminInitial}
             </div>
           </div>
         </header>

@@ -26,24 +26,38 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-info/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-bg flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background blobs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/8 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-info/6 rounded-full blur-[100px]" />
+        <div className="absolute top-1/3 left-0 w-[300px] h-[300px] bg-secondary/5 rounded-full blur-[80px]" />
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(108,99,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(108,99,255,1) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
       </div>
 
       <div className="w-full max-w-md relative z-10">
         {/* Card */}
-        <div className="bg-surfaceCard border border-border rounded-2xl p-8 shadow-card animate-slide-in">
+        <div className="bg-surfaceCard/90 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-[0_32px_64px_rgba(0,0,0,0.4)] animate-slide-in">
           {/* Logo + Heading */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto mb-4">
-              <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="#6C63FF" />
-              </svg>
+            <div className="relative inline-flex mb-5">
+              {/* Outer glow ring */}
+              <div className="absolute inset-0 rounded-2xl bg-primary/20 blur-xl scale-150" />
+              <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, #6C63FF, #4A43CC)' }}>
+                <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="white" />
+                </svg>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold text-textPrimary">CobrosApp</h1>
+            <h1 className="text-2xl font-bold text-textPrimary tracking-tight">CobrosApp</h1>
             <p className="text-textSecondary text-sm mt-1">Panel de Administración</p>
           </div>
 
@@ -123,8 +137,10 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3 text-sm"
+              className="w-full py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 relative overflow-hidden group"
+              style={{ background: loading ? undefined : 'linear-gradient(135deg, #6C63FF, #4A43CC)', backgroundColor: loading ? '#1E2640' : undefined }}
             >
+              <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg" />
               {loading ? (
                 <>
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -134,7 +150,12 @@ export default function Login() {
                   Iniciando sesión...
                 </>
               ) : (
-                'Iniciar sesión'
+                <>
+                  Iniciar sesión
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </>
               )}
             </button>
           </form>
