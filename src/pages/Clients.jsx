@@ -45,7 +45,11 @@ function CreditsPanel({ client, onClose }) {
     {
       key: 'installments',
       label: 'Cuotas',
-      render: (v, r) => <span className="text-xs text-textSecondary">{v || r.total_installments || '—'}</span>,
+      // v may be an array of installment objects — render the count, not the array itself
+      render: (v, r) => {
+        const count = Array.isArray(v) ? v.length : (v ?? r.total_installments ?? '—')
+        return <span className="text-xs text-textSecondary">{count}</span>
+      },
     },
   ]
 

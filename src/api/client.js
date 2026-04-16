@@ -85,6 +85,7 @@ export const vendorAPI = {
   update: (vendorId, data) => apiClient.put(`/vendors/${vendorId}`, data),
   delete: (vendorId) => apiClient.delete(`/vendors/${vendorId}`),
   resetDevice: (vendorId) => apiClient.post(`/vendors/${vendorId}/reset-device`),
+  resetPassword: (vendorId, password) => apiClient.post(`/vendors/${vendorId}/reset-password`, { password }),
   toggleStatus: (vendorId, active) =>
     apiClient.put(`/vendors/${vendorId}`, { status: active ? 'active' : 'inactive' }),
 }
