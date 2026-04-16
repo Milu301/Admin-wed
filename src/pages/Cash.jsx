@@ -36,12 +36,13 @@ export default function Cash() {
     setError(null)
     try {
       const [cashRes, summaryRes] = await Promise.allSettled([
-        adminAPI.getCash(adminId, d),
-        adminAPI.getCashSummary(adminId, d),
+        adminAPI.getAllCash(adminId, d),
+        adminAPI.getAllCashSummary(adminId, d),
       ])
       if (cashRes.status === 'fulfilled') {
         const d2 = cashRes.value.data
-        setMovements(Array.isArray(d2) ? d2 : d2.movements || d2.data || [])
+        const items = Array.isArray(d2) ? d2 : (d2?.items || d2?.movements || d2?.data || [])
+        setMovements(items)
       } else {
         setMovements([])
         if (cashRes.reason?.response?.status !== 404) {
@@ -127,12 +128,34 @@ export default function Cash() {
       },
     },
     {
-      key: 'vendor',
-      label: 'Vendedor',
-      render: (v, row) => <span className="text-sm text-textSecondary">{v || row.vendorName || row.vendor_name || '—'}</span>,
+      key: 'vendor_name',
+      label: 'Realizado por',
+      render: (v, row) => {
+        const name = v || row.vendorName || row.vendor_name
+        const source = row.source
+        if (!name && source === 'admin') {
+          return (
+            <div className="flex items-center gap-1.5">
+              <span className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">A</span>
+              <span className="text-sm text-textSecondary">Admin</span>
+            </div>
+          )
+        }
+        if (name) {
+          return (
+            <div className="flex items-center gap-1.5">
+              <span className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center text-success text-xs font-bold flex-shrink-0">
+                {name[0]?.toUpperCase()}
+              </span>
+              <span className="text-sm text-textSecondary">{name}</span>
+            </div>
+          )
+        }
+        return <span className="text-sm text-textMuted">—</span>
+      },
     },
     {
-      key: 'createdAt',
+      key: 'occurred_at',
       label: 'Hora',
       render: (v, row) => {
         const d = v || row.created_at || row.time

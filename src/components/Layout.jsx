@@ -9,6 +9,7 @@ const PAGE_TITLES = {
   '/clients': { title: 'Clientes', subtitle: 'Listado de clientes y créditos' },
   '/cash': { title: 'Caja', subtitle: 'Movimientos y balance diario' },
   '/reports': { title: 'Reportes', subtitle: 'Análisis y estadísticas' },
+  '/locations': { title: 'Ubicaciones', subtitle: 'Rastreo en tiempo real de vendedores' },
   '/settings': { title: 'Configuración', subtitle: 'Cuenta y preferencias' },
 }
 

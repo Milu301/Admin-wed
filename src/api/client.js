@@ -64,6 +64,10 @@ export const adminAPI = {
     apiClient.get(`/admins/${adminId}/clients`, { params }),
   getCash: (adminId, date) =>
     apiClient.get(`/admins/${adminId}/cash`, { params: { date } }),
+  getAllCash: (adminId, date, params = {}) =>
+    apiClient.get(`/admins/${adminId}/cash/all`, { params: { date, ...params } }),
+  getAllCashSummary: (adminId, date) =>
+    apiClient.get(`/admins/${adminId}/cash/all/summary`, { params: { date } }),
   getCashSummary: (adminId, date) =>
     apiClient.get(`/admins/${adminId}/cash/summary`, { params: { date } }),
   createCashMovement: (adminId, data) =>
@@ -78,6 +82,10 @@ export const adminAPI = {
     apiClient.get(`/admins/${adminId}/vendors/${vendorId}/route-day`, { params: { date } }),
   getVendorStats: (adminId, vendorId) =>
     apiClient.get(`/vendors/${vendorId}/stats`),
+  getAllVendorLocations: (adminId) =>
+    apiClient.get(`/admins/${adminId}/vendors/locations/latest`),
+  getVendorLatestLocation: (adminId, vendorId) =>
+    apiClient.get(`/admins/${adminId}/vendors/${vendorId}/location/latest`),
 }
 
 // ─── Vendors ───────────────────────────────────────────────────────────────
