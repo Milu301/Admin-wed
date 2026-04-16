@@ -101,4 +101,8 @@ export const vendorAPI = {
 // ─── Clients ───────────────────────────────────────────────────────────────
 export const clientAPI = {
   getCredits: (clientId) => apiClient.get(`/clients/${clientId}/credits`),
+  reassign: (clientId, vendorId) =>
+    apiClient.put(`/clients/${clientId}`, { vendor_id: vendorId }),
+  hardDelete: (adminId, clientId) =>
+    apiClient.delete(`/admins/${adminId}/clients/${clientId}/hard`),
 }
